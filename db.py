@@ -42,7 +42,7 @@ if __name__ == '__main__':
 	logger.info( 'loading training set and creating sqlite3 database' )
 
 	# connect to database (using sqlite3 lib built into python)
-	conn = sqlite3.connect( 'comp3208_example.db')
+	conn = sqlite3.connect('comp3208_example.db')
 
 	#
 	# comp3208-test-small.csv
