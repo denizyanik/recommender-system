@@ -8,11 +8,13 @@ np.random.seed(10)
 
 class RecommenderSystem:
 
-    def __init__(self, k=40, gamma=0.001, lam=0, db=sqlite3.connect('comp3208_example.db')):
+    def __init__(self, k=40, gamma=0.001, lam=0, db=sqlite3.connect('example_table.db')):
         self.k = k
         self.gamma = gamma
         self.lam = lam
         self.db = db.cursor()
+        self.item_set = {}
+        self.user_set = {}
 
         # Construct P and Q matrices
         self.db.execute('SELECT MAX(UserID) FROM example_table')
@@ -29,11 +31,13 @@ class RecommenderSystem:
             yield row
 
     def stochastic_gradient_descent(self, iterations):
-        for i in range(iterations):
+        for i in tqdm(range(iterations)):
             for row in self.get_shuffled_rows():
                 u, i, r, _ = row
                 u = u - 1
                 i = i - 1
+                self.user_set.add(u)
+                self.item_set.add(i)
 
                 predicted_rating = np.dot(self.p[u], self.q[i])
 
@@ -43,12 +47,16 @@ class RecommenderSystem:
 
 
     def predict(self, user, item):
-        prediction =  self.p[user, :].dot(self.q[item, :].T)
+        if user not in self.user_set or item not in self.item_set:
+            prediction = self.db.execute('SELECT AVG(Rating) FROM example_table')
+        else:
+            prediction =  self.p[user, :].dot(self.q[item, :].T)
         self.db.execute('UPDATE example_table SET PredRating=? WHERE UserID=? AND WHERE ItemID=?',(prediction,user,item))
         return prediction
 
 
 recommender = RecommenderSystem()
+
 
 
 """
@@ -62,7 +70,7 @@ lam = 0
 n_iterations = 1000
 
 
-conn = sqlite3.connect('comp3208_example.db')
+conn = sqlite3.connect('example_table.db')
 c = conn.cursor()
 
 n_users = train_small['user'].max()
