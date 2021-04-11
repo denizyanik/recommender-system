@@ -42,7 +42,7 @@ class RecommenderSystem:
                 self.q[i, :] += self.gamma * (error * self.p[u, :] - self.lam * self.q[i, :])
 
     def predict(self, user, item):
-        pass
+        return self.p[user, :].dot(self.q[item, :].T)
 
 
 recommender = RecommenderSystem()
