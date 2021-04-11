@@ -41,8 +41,11 @@ class RecommenderSystem:
                 self.p[u, :] += self.gamma * (error * self.q[i, :] - self.lam * self.p[u, :])
                 self.q[i, :] += self.gamma * (error * self.p[u, :] - self.lam * self.q[i, :])
 
+
     def predict(self, user, item):
-        return self.p[user, :].dot(self.q[item, :].T)
+        prediction =  self.p[user, :].dot(self.q[item, :].T)
+        self.db.execute('UPDATE example_table SET PredRating=? WHERE UserID=? AND WHERE ItemID=?',(prediction,user,item))
+        return prediction
 
 
 recommender = RecommenderSystem()
