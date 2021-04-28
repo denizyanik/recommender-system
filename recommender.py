@@ -113,15 +113,16 @@ class RecommenderSystem:
         self.factors = factors
 
     def __call__(self,x):
-        x = Embedding(self.items,self.factors,embeddings_initializer='he_normal',embeddings_regularizer=12(1e-6)) (x)
-        x = Reshape((self.n_factors,)) (x)
+        x = Embedding(self.items,self.factors,embeddings_initializer='he_normal',embeddings_regularizer=12(1e-6))(x)
+        x = Reshape((self.factors,)) (x)
         return x
 
-def recommender_system(n_users,n_items,n_factors,min_rating,max_rating,user,item):
-
+def recommender_system(n_users,n_items,n_factors,min_rating,max_rating):
+    user = Input(shape=(1,))
     u = RecommenderSystem(n_users,n_factors)(user)
     ux = RecommenderSystem(n_users,1)(user)
 
+    item = Input(shape=(1,))
     i = RecommenderSystem(n_items, n_factors)(item)
     ix = RecommenderSystem(n_items, 1)(item)
 
@@ -159,12 +160,14 @@ def process_data(data):
 
     x = [x[:,0],x[:,1]]
 
-    return x,y
+    return x,y,users,items,min_rating,max_rating
 
 
 train_small = pandas.read_csv(r"comp3208-train-small.csv",names = ["userId", "itemId","score","timestamp"])
-x_train, y_train = process_data(train_small)
+x_train, y_train,users,items,min_rating,max_rating = process_data(train_small)
 
 test_small = pandas.read_csv(r"comp3208-test-small.csv",names = ["userId", "itemId","score","timestamp"])
-x_test, y_test = process_data(test_small)
+x_test, y_test,_,_,_,_ = process_data(test_small)
 
+model = recommender_system(users,items,50,min_rating,max_rating)
+model.summary()
