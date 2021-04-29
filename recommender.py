@@ -174,3 +174,5 @@ model = recommender_system(users,items,50,min_rating,max_rating)
 model.summary()
 
 history = model.fit(x=x_train, y=y_train, batch_size=64, epochs=5, verbose=1, validation_data=(x_test,y_test))
+
+model.save_weights("model.hdf5")
