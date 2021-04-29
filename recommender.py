@@ -164,15 +164,18 @@ def process_data(data):
     return x,y,users,items,min_rating,max_rating
 
 
-train_small = pandas.read_csv(r"comp3208-train-small.csv",names = ["userId", "itemId","score","timestamp"])
+train_small = pandas.read_csv(r"comp3208-train.csv",names = ["userId", "itemId","score","timestamp"])
 x_train, y_train,users,items,min_rating,max_rating = process_data(train_small)
 
-test_small = pandas.read_csv(r"comp3208-test-small.csv",names = ["userId", "itemId","score","timestamp"])
+test_small = pandas.read_csv(r"comp3208-test.csv",names = ["userId", "itemId","score","timestamp"])
 x_test, y_test,_,_,_,_ = process_data(test_small)
 
 model = recommender_system(users,items,50,min_rating,max_rating)
 model.summary()
 
-history = model.fit(x=x_train, y=y_train, batch_size=64, epochs=5, verbose=1, validation_data=(x_test,y_test))
+history = model.fit(x=x_train, y=y_train, batch_size=64000, epochs=5, verbose=1, validation_data=(x_test,y_test))
 
 model.save_weights("model.hdf5")
+
+results = model.predict(x_test)
+print(results)
