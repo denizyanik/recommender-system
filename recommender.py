@@ -108,13 +108,14 @@ for i in range(0,n_iterations):
 
 class RecommenderSystem:
 
-    def __init__(self,items,factors):
-        self.items = items
-        self.factors = factors
+    def __init__(self,n_items,n_factors):
+        self.n_items = n_items
+        self.n_factors = n_factors
 
     def __call__(self,x):
-        x = Embedding(self.items,self.factors,embeddings_initializer='he_normal',embeddings_regularizer=12(1e-6))(x)
-        x = Reshape((self.factors,)) (x)
+        x = Embedding(self.n_items, self.n_factors, embeddings_initializer='he_normal',
+                      embeddings_regularizer=l2(1e-6))(x)
+        x = Reshape((self.n_factors,)) (x)
         return x
 
 def recommender_system(n_users,n_items,n_factors,min_rating,max_rating):
@@ -171,3 +172,5 @@ x_test, y_test,_,_,_,_ = process_data(test_small)
 
 model = recommender_system(users,items,50,min_rating,max_rating)
 model.summary()
+
+history = model.fit(x=x_train, y=y_train, batch_size=64, epochs=5, verbose=1, validation_data=(x_test,y_test))
